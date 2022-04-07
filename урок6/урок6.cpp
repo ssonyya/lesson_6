@@ -7,7 +7,7 @@
 #include "math_3d.h"
 
 GLuint VBO;
-GLuint gWorldLocation;
+GLuint gWorldLocation; //указатель для доступа к всемирной матрице
 
 
 static const char* pVS = "                                                          \n\
@@ -40,14 +40,15 @@ static void RenderSceneCB()
 
     Scale += 0.001f;
 
-    Matrix4f World;
-
+    Matrix4f World; //подготавливаем матрицу 4x4 и заполняем
+    //устанавливаем v2 и v3 в 0, поэтому у объекта координаты Y и Z не будут изменяться, и мы записываем в v1 значения синуса. 
+    //Это будет изменять координату X на значение, плавно переходящее от -1 и до 1
     World.m[0][0] = 1.0f; World.m[0][1] = 0.0f; World.m[0][2] = 0.0f; World.m[0][3] = sinf(Scale);
     World.m[1][0] = 0.0f; World.m[1][1] = 1.0f; World.m[1][2] = 0.0f; World.m[1][3] = 0.0f;
     World.m[2][0] = 0.0f; World.m[2][1] = 0.0f; World.m[2][2] = 1.0f; World.m[2][3] = 0.0f;
     World.m[3][0] = 0.0f; World.m[3][1] = 0.0f; World.m[3][2] = 0.0f; World.m[3][3] = 1.0f;
 
-    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, &World.m[0][0]);
+    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, &World.m[0][0]); //загружаем матрицу в шейдер
 
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
